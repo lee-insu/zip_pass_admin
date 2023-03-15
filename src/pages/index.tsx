@@ -2,8 +2,13 @@ import Head from "next/head";
 import Image from "next/image";
 import {useState, useEffect} from "react";
 import styles from "@/styles/Home.module.css";
-
+import {getFirestore, collection, addDoc} from "firebase/firestore";
 import dynamic from "next/dynamic";
+import {app} from "../../service/firebase";
+import type {FC} from "react";
+
+const db = getFirestore(app);
+const collectionRef = collection(db, "house_info");
 
 export default function Home() {
   const DynamicEditor = dynamic(() => import("../components/EditorModule"), {
@@ -11,10 +16,64 @@ export default function Home() {
   });
 
   const [isEditorReady, setIsEditorReady] = useState(false);
+  const [postData, setPostData] = useState({
+    created_at: new Date(),
+    started_at: "",
+    deadline_at: "",
+    address: "",
+    category: "",
+    deposit: 0,
+    rent: 0,
+    area: 0,
+    url: "",
+    exposure: true,
+    detail: "",
+  });
 
-  useEffect(() => {
-    setIsEditorReady(true);
-  }, []);
+  const [startedAt, setStartedAt] = useState("");
+  const [deadlineAt, setDeadlineAt] = useState("");
+
+  const handleInputChange = (e: any) => {
+    const {name, value} = e.target;
+
+    setPostData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleStartedAtChange = (e: any) => {
+    const {value} = e.target;
+    setStartedAt(value);
+    setPostData((prevState) => ({...prevState, started_at: value}));
+  };
+
+  const handleDeadlineAtChange = (e: any) => {
+    const {value} = e.target;
+    setDeadlineAt(value);
+    setPostData((prevState) => ({...prevState, deadline_at: value}));
+  };
+
+  const handleAddPost = async () => {
+    await addDoc(collectionRef, postData);
+    try {
+      setPostData({
+        created_at: new Date(),
+        started_at: "",
+        deadline_at: "",
+        address: "",
+        category: "",
+        deposit: 0,
+        rent: 0,
+        area: 0,
+        url: "",
+        exposure: true,
+        detail: "",
+      });
+    } catch (e) {
+      alert(`Error adding Document ${e}`);
+    }
+  };
 
   return (
     <>
@@ -24,12 +83,127 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div>
-        {isEditorReady ? (
-          <DynamicEditor isEditorReady={isEditorReady} />
-        ) : (
-          <p>불러오는중.. </p>
-        )}
+      <div className="w-3/5 m-auto space-y-6">
+        <div className="h-[100px]"></div>
+        <div>
+          <label htmlFor="address" className="block text-lg font-medium mb-1">
+            주소
+          </label>
+          <input
+            type="text"
+            name="address"
+            value={postData.address}
+            onChange={handleInputChange}
+            className="w-4/5 border-2 rounded-md py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="category" className="block text-lg font-medium mb-1">
+            유형
+          </label>
+          <input
+            type="text"
+            name="category"
+            value={postData.category}
+            onChange={handleInputChange}
+            className="w-4/5 border-2 rounded-md py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="deposit" className="block text-lg font-medium mb-1">
+            보증금
+          </label>
+          <input
+            type="text"
+            name="deposit"
+            value={postData.deposit}
+            onChange={handleInputChange}
+            className="w-4/5 border-2 rounded-md py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="rent" className="block text-lg font-medium mb-1">
+            월세
+          </label>
+          <input
+            type="text"
+            name="rent"
+            value={postData.rent}
+            onChange={handleInputChange}
+            className="w-4/5 border-2 rounded-md py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="area" className="block text-lg font-medium mb-1">
+            면적
+          </label>
+          <input
+            type="text"
+            name="area"
+            value={postData.area}
+            onChange={handleInputChange}
+            className="w-4/5 border-2 rounded-md py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="url" className="block text-lg font-medium mb-1">
+            공고 주소
+          </label>
+          <input
+            type="text"
+            name="url"
+            value={postData.url}
+            onChange={handleInputChange}
+            className="w-4/5 border-2 rounded-md py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="started_at" className="block font-medium mb-1">
+            시작 날짜
+          </label>
+          <input
+            type="datetime-local"
+            id="started_at"
+            name="started_at"
+            value={startedAt}
+            onChange={handleStartedAtChange}
+            className="w-full border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="deadline_at" className="block font-medium mb-1">
+            마감 날짜
+          </label>
+          <input
+            type="datetime-local"
+            id="deadline_at"
+            name="deadline_at"
+            value={deadlineAt}
+            onChange={handleDeadlineAtChange}
+            className="w-full border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+        <div>
+          <label htmlFor="url" className="block text-lg font-medium mb-1">
+            상세 내용
+          </label>
+          <DynamicEditor />
+        </div>
+
+        <button
+          onClick={handleAddPost}
+          className="bg-indigo-500 text-white py-2 px-4 rounded hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-opacity-50"
+        >
+          업로드 하기
+        </button>
+        <div className="h-[200px]"></div>
       </div>
     </>
   );
