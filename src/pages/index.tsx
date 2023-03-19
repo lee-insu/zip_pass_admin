@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 import styles from "@/styles/Home.module.css";
 import {getFirestore, collection, addDoc} from "firebase/firestore";
 import dynamic from "next/dynamic";
@@ -11,11 +11,10 @@ const db = getFirestore(app);
 const collectionRef = collection(db, "house_info");
 
 export default function Home() {
-  const DynamicEditor = dynamic(() => import("../components/EditorModule"), {
+  const DynamicEditor = dynamic(() => import("../components/ToastEditor"), {
     ssr: false,
   });
 
-  const [isEditorReady, setIsEditorReady] = useState(false);
   const [postData, setPostData] = useState({
     created_at: new Date(),
     started_at: "",
@@ -74,6 +73,9 @@ export default function Home() {
       alert(`Error adding Document ${e}`);
     }
   };
+  const handleShowContent = (content: string) => {
+    setPostData((prevState) => ({...prevState, detail: content}));
+  };
 
   return (
     <>
@@ -97,7 +99,6 @@ export default function Home() {
             className="w-4/5 border-2 rounded-md py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
-
         <div>
           <label htmlFor="category" className="block text-lg font-medium mb-1">
             유형
@@ -110,7 +111,6 @@ export default function Home() {
             className="w-4/5 border-2 rounded-md py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
-
         <div>
           <label htmlFor="deposit" className="block text-lg font-medium mb-1">
             보증금
@@ -123,7 +123,6 @@ export default function Home() {
             className="w-4/5 border-2 rounded-md py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
-
         <div>
           <label htmlFor="rent" className="block text-lg font-medium mb-1">
             월세
@@ -136,7 +135,6 @@ export default function Home() {
             className="w-4/5 border-2 rounded-md py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
-
         <div>
           <label htmlFor="area" className="block text-lg font-medium mb-1">
             면적
@@ -149,7 +147,6 @@ export default function Home() {
             className="w-4/5 border-2 rounded-md py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
-
         <div>
           <label htmlFor="url" className="block text-lg font-medium mb-1">
             공고 주소
@@ -162,7 +159,6 @@ export default function Home() {
             className="w-4/5 border-2 rounded-md py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
-
         <div>
           <label htmlFor="started_at" className="block font-medium mb-1">
             시작 날짜
@@ -176,7 +172,6 @@ export default function Home() {
             className="w-full border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
-
         <div>
           <label htmlFor="deadline_at" className="block font-medium mb-1">
             마감 날짜
@@ -194,7 +189,15 @@ export default function Home() {
           <label htmlFor="url" className="block text-lg font-medium mb-1">
             상세 내용
           </label>
-          <DynamicEditor />
+          {postData.address &&
+          postData.category &&
+          postData.deposit &&
+          postData.rent &&
+          postData.area &&
+          startedAt &&
+          deadlineAt ? (
+            <DynamicEditor onShowContent={handleShowContent} />
+          ) : null}
         </div>
 
         <button
