@@ -243,10 +243,10 @@ export default function Home() {
         </div>
 
         <div>
-          <label htmlFor="live" className="block font-medium mb-1">
+          <label htmlFor="location" className="block font-medium mb-1">
             사는 곳 이점
           </label>
-          <select name="live" onChange={handleInputChange}>
+          <select name="location" onChange={handleInputChange}>
             <option value="">선택</option>
             <option value="서울시">서울시</option>
             <option value="지방">지방</option>
