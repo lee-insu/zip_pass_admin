@@ -27,6 +27,12 @@ export default function Home() {
     url: "",
     exposure: true,
     detail: "",
+    age: "",
+    car: "",
+    welfare: "",
+    location: "",
+    salary: "",
+    compete: 0,
   });
 
   const [startedAt, setStartedAt] = useState("");
@@ -68,6 +74,12 @@ export default function Home() {
         url: "",
         exposure: true,
         detail: "",
+        age: "",
+        car: "",
+        welfare: "",
+        location: "",
+        salary: "",
+        compete: 0,
       });
     } catch (e) {
       alert(`Error adding Document ${e}`);
@@ -160,6 +172,18 @@ export default function Home() {
           />
         </div>
         <div>
+          <label htmlFor="compete" className="block text-lg font-medium mb-1">
+            예상경쟁률
+          </label>
+          <input
+            type="text"
+            name="compete"
+            value={postData.compete}
+            onChange={handleInputChange}
+            className="w-4/5 border-2 rounded-md py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+        <div>
           <label htmlFor="started_at" className="block font-medium mb-1">
             시작 날짜
           </label>
@@ -185,6 +209,63 @@ export default function Home() {
             className="w-full border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
+        <div className="w-full text-blue-500 mx-5"> 조건들</div>
+        <div>
+          <label htmlFor="age" className="block font-medium mb-1">
+            나이 제한
+          </label>
+          <select name="age" onChange={handleInputChange}>
+            <option value="">선택</option>
+            <option value="18,32">32세 미만</option>
+            <option value="전체">전체</option>
+          </select>
+        </div>
+        <div>
+          <label htmlFor="car" className="block font-medium mb-1">
+            차 여부
+          </label>
+          <select name="car" onChange={handleInputChange}>
+            <option value="">선택</option>
+            <option value="없음">없음</option>
+            <option value="전체">상관없음</option>
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="welfare" className="block font-medium mb-1">
+            차상위계층 혜택 여부
+          </label>
+          <select name="welfare" onChange={handleInputChange}>
+            <option value="">선택</option>
+            <option value="있음">있음</option>
+            <option value="없음">없음</option>
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="live" className="block font-medium mb-1">
+            사는 곳 이점
+          </label>
+          <select name="live" onChange={handleInputChange}>
+            <option value="">선택</option>
+            <option value="서울시">서울시</option>
+            <option value="지방">지방</option>
+            <option value="없음">상관없음</option>
+          </select>
+        </div>
+        <div>
+          <label htmlFor="salary" className="block font-medium mb-1">
+            월급 제한
+          </label>
+          <select name="salary" onChange={handleInputChange}>
+            <option value="">선택</option>
+            <option value="없음">제한없음</option>
+            <option value="100만원 미만">100만원 미만</option>
+            <option value="200만원 이하">200만원 이하</option>
+            <option value="300만원 이하">300만원 이하</option>
+          </select>
+        </div>
+
         <div>
           <label htmlFor="url" className="block text-lg font-medium mb-1">
             상세 내용
@@ -195,7 +276,8 @@ export default function Home() {
           postData.rent &&
           postData.area &&
           startedAt &&
-          deadlineAt ? (
+          deadlineAt &&
+          postData.compete ? (
             <DynamicEditor onShowContent={handleShowContent} />
           ) : null}
         </div>
